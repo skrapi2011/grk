@@ -37,7 +37,7 @@
             // Wymiary osi
             let arr = makeArr(max);
             // Rysowanie
-            let res = drawLine(arr, p1, p2);
+            let res = drawLine2(arr, p1, p2);
             // Wyświetlanie
             let solutionDiv = document.getElementById('solution');
             solutionDiv.innerHTML = '';
@@ -63,6 +63,33 @@
             solutionDiv.innerHTML += columnIndices;
         }
 
+        function drawLine2(arr, p1, p2){
+            let x = p1[0],
+                y = p1[1],
+                dx = p2[0] - p1[0],
+                dy = p2[1] - p1[1],
+                a = 2*dy,
+                b = 2*dy - 2*dx,
+                p = 2*dy - dx;
+
+                arr[x][y] = 1;
+
+            while(x<=p2[0] && y<=p2[1]){
+                if(p<0){
+                    x += 1;
+                    p += a;
+                }else{
+                    x += 1;
+                    y += 1;
+                    p += b;
+                }
+                if(x<=p2[0] && y<=p2[1]){
+                    arr[y][x] = 1;
+                }
+                
+            }
+            return arr;
+        }
         function drawLine(arr, p1, p2){
             let kx, ky,
                 x1 = p1[0],
