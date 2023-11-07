@@ -48,7 +48,7 @@
                 let rowString = row.map(value => {
                     // Dla każdej jedynki zmiana koloru
                     return value === 1 ? `<span style="color: dark; background-color: green;">${value}</span>` : value;
-                }).join(' ') + `<span style="color: red; font-weight: bold;"> ${rowNum} </span><br>`;
+                }).join('&nbsp;&nbsp;') + `<span style="color: red; font-weight: bold;">${rowNum}</span><br>`;
                 rowNum++;
                 // Dodawanie do solution
                 solutionDiv.innerHTML += rowString;
