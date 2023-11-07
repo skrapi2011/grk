@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jebac grk</title>
+</head>
+<body>
+    <div>
+        Punkt 1: <br>
+        <label for="x1">x1:</label>
+        <input type="text" id="x1" style="width: 30px">
+        <label for="y1">y1:</label>
+        <input type="text" id="y1" style="width: 30px">
+        <br>
+        Punkt 2: <br>
+        <label for="x2">x2:</label>
+        <input type="text" id="x2" style="width: 30px">
+        <label for="y2">y2:</label>
+        <input type="text" id="y2" style="width: 30px">
+        <br>
+        <button onclick="updateSolution()">Rysuj linię</button>
+    </div>
+    <div id="solution"></div>
+
+    <script>
+
+        function updateSolution(){
+            let x1 = parseInt(document.getElementById("x1").value);
+            let y1 = parseInt(document.getElementById("y1").value);
+            let x2 = parseInt(document.getElementById("x2").value);
+            let y2 = parseInt(document.getElementById("y2").value);
+            let p1 = [x1,y1];
+            let p2 = [x2,y2];
+            let max = Math.max(...(p1.concat(p2)))+2;
+
+            // Wymiary osi
+            let arr = makeArr(max);
+            // Rysowanie
+            let res = drawLine(arr, p1, p2);
+            // Wyświetlanie
+            let solutionDiv = document.getElementById('solution');
+            solutionDiv.innerHTML = '';
+
+            let rowNum = 0;
+            res.forEach(row => {
+                // Wiersz tablicy
+                let rowString = row.map(value => {
+                    // Dla każdej "jedynki" dodaj kolorowanie
+                    return value === 1 ? `<span style="color: dark; background-color: green;">${value}</span>` : value;
+                }).join(' ') + `<span style="color: red; font-weight: bold;"> ${rowNum} </span><br>`;
+                rowNum++;
+                // Dodawanie do solution
+                solutionDiv.innerHTML += rowString;
+            });
+
+            // Dodaj indeksy kolumn na czerwono
+            let columnIndices = '<span style="color: red; font-weight: bold;">';
+            for (let i = 0; i < max; i++) {
+                columnIndices += `${i} `;
+            }
+            columnIndices += '</span><br>';
+            solutionDiv.innerHTML += columnIndices;
+        }
+
+        function drawLine(arr, p1, p2){
+            let kx, ky,
+                x1 = p1[0],
+                y1 = p1[1],
+                dx = Math.abs(p2[0] - p1[0]),
+                dy = Math.abs(p2[1] - p1[1]),
+                e;
+
+            if(p1[0] <= p2[0]) kx = 1;
+            else kx = -1;
+            if(p1[1] <= p2[1]) ky = 1;
+            else ky = -1;
+            arr[y1][x1] = 1;
+            if(dx >= dy){
+                e = dx / 2;
+                for(let i = 0; i < dx; i++){
+                    x1 += kx;
+                    e -= dy;
+                    if(e < 0){
+                        y1 += ky;
+                        e += dx;
+                    }
+                    arr[y1][x1] = 1; // Ustaw tylko jeśli indeksy mieszczą się w zakresie
+                }
+            return arr;
+            }
+            e = dy / 2;
+            for(let i = 0; i < dy; i++){
+                y1 += ky;
+                e -= dx;
+                if(e < 0){
+                    x1 += kx;
+                    e += dy;
+                }
+                arr[y1][x1] = 1;
+            }
+            return arr;
+        }
+        function drawArr(arr) {
+            arr.forEach(a => {
+                console.log(a.join(' '));
+            });
+        }
+        function makeArr(x){
+            let arr = new Array(x);
+            for (let i = 0; i < arr.length; i++) {
+                arr[i] = new Array(x).fill(0);
+            }
+            return arr
+        }
+
+    </script>
+
+</body>
+</html>
