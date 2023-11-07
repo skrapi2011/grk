@@ -46,7 +46,7 @@
             res.forEach(row => {
                 // Wiersz tablicy
                 let rowString = row.map(value => {
-                    // Dla każdej "jedynki" dodaj kolorowanie
+                    // Dla każdej jedynki zmiana koloru
                     return value === 1 ? `<span style="color: dark; background-color: green;">${value}</span>` : value;
                 }).join(' ') + `<span style="color: red; font-weight: bold;"> ${rowNum} </span><br>`;
                 rowNum++;
@@ -54,7 +54,7 @@
                 solutionDiv.innerHTML += rowString;
             });
 
-            // Dodaj indeksy kolumn na czerwono
+            // Dodawanie indeksów kolumnowych
             let columnIndices = '<span style="color: red; font-weight: bold;">';
             for (let i = 0; i < max; i++) {
                 columnIndices += `${i} `;
@@ -85,7 +85,7 @@
                         y1 += ky;
                         e += dx;
                     }
-                    arr[y1][x1] = 1; // Ustaw tylko jeśli indeksy mieszczą się w zakresie
+                    arr[y1][x1] = 1;
                 }
             return arr;
             }
@@ -115,6 +115,5 @@
         }
 
     </script>
-
 </body>
 </html>
