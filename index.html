@@ -20,7 +20,7 @@
         <label for="y2a">y2:</label>
         <input type="text" id="y2a" style="width: 30px">
         <br>
-        <button onclick="drawBresenham()">Rysuj linię</button>
+        <button onclick="updateBresenham()">Rysuj linię</button>
     </div>
     <div id="solution"></div>
 
@@ -38,13 +38,13 @@
         <label for="y2b">y2:</label>
         <input type="text" id="y2b" style="width: 30px">
         <br>
-        <button onclick="drawDDA()">Rysuj linię</button>
+        <button onclick="updateDDA()">Rysuj linię</button>
     </div>
     <div id="solution2"></div>
 
     <script>
 
-        function drawBresenham(){
+        function updateBresenham(){
             let x1 = parseInt(document.getElementById("x1a").value);
             let y1 = parseInt(document.getElementById("y1a").value);
             let x2 = parseInt(document.getElementById("x2a").value);
@@ -81,7 +81,7 @@
             columnIndices += '</span><br>';
             solutionDiv.innerHTML += columnIndices;
         }
-        function drawDDA(){
+        function updateDDA(){
             let x1 = parseInt(document.getElementById("x1b").value);
             let y1 = parseInt(document.getElementById("y1b").value);
             let x2 = parseInt(document.getElementById("x2b").value);
@@ -127,7 +127,7 @@
                 a = 2*dy,
                 b = 2*dy - 2*dx,
                 p = 2*dy - dx;
-                arr[x][y] = 1;
+                arr[y][x] = 1;
 
             while(x<=p2[0] && y<=p2[1]){
                 if(p<0){
@@ -149,59 +149,19 @@
                 y = p1[1],
                 dx = p2[0] - p1[0],
                 dy = p2[1] - p1[1],
-                steps = Math.abs(dx) > Math.abs(dy) ? Math.abs(dx) : Math.abs(dy),
-                xInc = dx / steps,
-                yInc = dy / steps;
+                m = dy/dx;
 
-            arr[y][x] = 1;  // Zakładając, że indeksowanie zaczyna się od górnego lewego rogu
+            arr[y][x] = 1;
 
-            for (let i = 0; i < steps; i++) {
-                x += xInc;
-                y += yInc;
-                if(x < arr[0].length && y < arr.length) {
-                    arr[Math.round(y)][Math.round(x)] = 1;
-                }
+            while(x<=p2[0] && y<=p2[1]){
+                x += 1;
+                y = Math.round(p1[1] + m*(x-p1[0]))
+                console.log(x+" | "+y)
+                if(x<=p2[0] && y<=p2[1]) arr[y][x] = 1;
             }
             return arr;
         }
-        function drawLine(arr, p1, p2){
-            let kx, ky,
-                x1 = p1[0],
-                y1 = p1[1],
-                dx = Math.abs(p2[0] - p1[0]),
-                dy = Math.abs(p2[1] - p1[1]),
-                e;
-
-            if(p1[0] <= p2[0]) kx = 1;
-            else kx = -1;
-            if(p1[1] <= p2[1]) ky = 1;
-            else ky = -1;
-            arr[y1][x1] = 1;
-            if(dx >= dy){
-                e = dx / 2;
-                for(let i = 0; i < dx; i++){
-                    x1 += kx;
-                    e -= dy;
-                    if(e < 0){
-                        y1 += ky;
-                        e += dx;
-                    }
-                    arr[y1][x1] = 1;
-                }
-            return arr;
-            }
-            e = dy / 2;
-            for(let i = 0; i < dy; i++){
-                y1 += ky;
-                e -= dx;
-                if(e < 0){
-                    x1 += kx;
-                    e += dy;
-                }
-                arr[y1][x1] = 1;
-            }
-            return arr;
-        }
+        
         function drawArr(arr) {
             arr.forEach(a => {
                 console.log(a.join(' '));
