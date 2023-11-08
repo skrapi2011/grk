@@ -7,29 +7,48 @@
 </head>
 <body>
     <div>
+        <h4>Algorytm Bresenhama</h4>
         Punkt 1: <br>
-        <label for="x1">x1:</label>
-        <input type="text" id="x1" style="width: 30px">
-        <label for="y1">y1:</label>
-        <input type="text" id="y1" style="width: 30px">
+        <label for="x1a">x1:</label>
+        <input type="text" id="x1a" style="width: 30px">
+        <label for="y1a">y1:</label>
+        <input type="text" id="y1a" style="width: 30px">
         <br>
         Punkt 2: <br>
-        <label for="x2">x2:</label>
-        <input type="text" id="x2" style="width: 30px">
-        <label for="y2">y2:</label>
-        <input type="text" id="y2" style="width: 30px">
+        <label for="x2a">x2:</label>
+        <input type="text" id="x2a" style="width: 30px">
+        <label for="y2a">y2:</label>
+        <input type="text" id="y2a" style="width: 30px">
         <br>
-        <button onclick="updateSolution()">Rysuj linię</button>
+        <button onclick="drawBresenham()">Rysuj linię</button>
     </div>
     <div id="solution"></div>
 
+    <div>
+        <h4>Algorytm DDA</h4>
+        Punkt 1: <br>
+        <label for="x1b">x1:</label>
+        <input type="text" id="x1b" style="width: 30px">
+        <label for="y1b">y1:</label>
+        <input type="text" id="y1b" style="width: 30px">
+        <br>
+        Punkt 2: <br>
+        <label for="x2b">x2:</label>
+        <input type="text" id="x2b" style="width: 30px">
+        <label for="y2b">y2:</label>
+        <input type="text" id="y2b" style="width: 30px">
+        <br>
+        <button onclick="drawDDA()">Rysuj linię</button>
+    </div>
+    <div id="solution2"></div>
+
     <script>
 
-        function updateSolution(){
-            let x1 = parseInt(document.getElementById("x1").value);
-            let y1 = parseInt(document.getElementById("y1").value);
-            let x2 = parseInt(document.getElementById("x2").value);
-            let y2 = parseInt(document.getElementById("y2").value);
+        function drawBresenham(){
+            let x1 = parseInt(document.getElementById("x1a").value);
+            let y1 = parseInt(document.getElementById("y1a").value);
+            let x2 = parseInt(document.getElementById("x2a").value);
+            let y2 = parseInt(document.getElementById("y2a").value);
             let p1 = [x1,y1];
             let p2 = [x2,y2];
             let max = Math.max(...(p1.concat(p2)))+2;
@@ -37,7 +56,7 @@
             // Wymiary osi
             let arr = makeArr(max);
             // Rysowanie
-            let res = drawLine2(arr, p1, p2);
+            let res = drawBresenhamLine(arr, p1, p2);
             // Wyświetlanie
             let solutionDiv = document.getElementById('solution');
             solutionDiv.innerHTML = '';
@@ -62,8 +81,45 @@
             columnIndices += '</span><br>';
             solutionDiv.innerHTML += columnIndices;
         }
+        function drawDDA(){
+            let x1 = parseInt(document.getElementById("x1b").value);
+            let y1 = parseInt(document.getElementById("y1b").value);
+            let x2 = parseInt(document.getElementById("x2b").value);
+            let y2 = parseInt(document.getElementById("y2b").value);
+            let p1 = [x1,y1];
+            let p2 = [x2,y2];
+            let max = Math.max(...(p1.concat(p2)))+2;
 
-        function drawLine2(arr, p1, p2){
+            // Wymiary osi
+            let arr = makeArr(max);
+            // Rysowanie
+            let res = drawDDALine(arr, p1, p2);
+            // Wyświetlanie
+            let solutionDiv = document.getElementById('solution2');
+            solutionDiv.innerHTML = '';
+
+            let rowNum = 0;
+            res.forEach(row => {
+                // Wiersz tablicy
+                let rowString = row.map(value => {
+                    // Dla każdej jedynki zmiana koloru
+                    return value === 1 ? `<span style="color: dark; background-color: green;">${value}</span>` : value;
+                }).join(' ') + `<span style="color: red; font-weight: bold;"> ${rowNum}</span><br>`;
+                rowNum++;
+                // Dodawanie do solution
+                solutionDiv.innerHTML += rowString;
+            });
+
+            // Dodawanie indeksów kolumnowych
+            let columnIndices = '<span style="color: red; font-weight: bold;">';
+            for (let i = 0; i < max; i++) {
+                columnIndices += `${i} `;
+            }
+            columnIndices += '</span><br>';
+            solutionDiv.innerHTML += columnIndices;
+        }
+        function drawBresenhamLine(arr, p1, p2){
+
             let x = p1[0],
                 y = p1[1],
                 dx = p2[0] - p1[0],
@@ -71,7 +127,6 @@
                 a = 2*dy,
                 b = 2*dy - 2*dx,
                 p = 2*dy - dx;
-
                 arr[x][y] = 1;
 
             while(x<=p2[0] && y<=p2[1]){
@@ -86,7 +141,26 @@
                 if(x<=p2[0] && y<=p2[1]){
                     arr[y][x] = 1;
                 }
-                
+            }
+            return arr;
+        }
+        function drawDDALine(arr, p1, p2){
+            let x = p1[0],
+                y = p1[1],
+                dx = p2[0] - p1[0],
+                dy = p2[1] - p1[1],
+                steps = Math.abs(dx) > Math.abs(dy) ? Math.abs(dx) : Math.abs(dy),
+                xInc = dx / steps,
+                yInc = dy / steps;
+
+            arr[y][x] = 1;  // Zakładając, że indeksowanie zaczyna się od górnego lewego rogu
+
+            for (let i = 0; i < steps; i++) {
+                x += xInc;
+                y += yInc;
+                if(x < arr[0].length && y < arr.length) {
+                    arr[Math.round(y)][Math.round(x)] = 1;
+                }
             }
             return arr;
         }
